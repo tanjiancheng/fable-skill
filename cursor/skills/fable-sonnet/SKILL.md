@@ -30,12 +30,17 @@ do it directly. Staging a trivial task buries the answer under ceremony.
 1. Confirm the runtime exposes a subagent tool (Claude Code: Agent tool; Cursor: Task
    tool). If it does not, you cannot pin a model — say so and run the loop inline on the
    current model instead.
-2. Spawn a general-purpose subagent pinned to the latest Sonnet-class model the runtime
-   offers. Use the runtime's own parameter names and model identifiers — e.g. Claude
-   Code: `model: "sonnet"`, `subagent_type: "general-purpose"`; Cursor: `subagent_type:
-   "generalPurpose"` with the newest `claude-sonnet-*` slug from the runtime's allowed
-   model list. If no Sonnet-class model is in the runtime's list, say so and either run
-   inline or ask which available model to use — do not silently substitute another tier.
+2. Spawn a general-purpose subagent pinned to the balanced mid-tier model the runtime
+   actually offers — check the runtime's own allowed model list first; do not assume a
+   model name exists.
+   - Claude Code: `model: "sonnet"`, `subagent_type: "general-purpose"`.
+   - Cursor: `subagent_type: "generalPurpose"` with the newest `claude-sonnet-*` slug
+     from the Task tool's allowed model list (at the time of writing:
+     `claude-sonnet-5-thinking-high`). Cursor slugs are exact strings — passing a bare
+     "sonnet" fails.
+   - If no Sonnet-class model is in the runtime's list, pick the closest balanced
+     mid-tier slug from the list, state the substitution in your report, and proceed.
+     If nothing comparable exists, say so and run the loop inline instead.
 3. Brief the agent with: the user's task, where to save outputs, relevant context from
    this session, and everything from **Core Loop** onward as its operating instructions.
    The subagent does not inherit this session's skills, so the operational rules below

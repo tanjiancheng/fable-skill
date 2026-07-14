@@ -32,14 +32,17 @@ do it directly. Staging a trivial task buries the answer under ceremony.
 1. Confirm the runtime exposes a subagent tool (Claude Code: Agent tool; Cursor: Task
    tool). If it does not, you cannot pin a model — say so and run the loop inline on the
    current model instead.
-2. Spawn a general-purpose subagent pinned to the cheapest/fastest Haiku-class model the
-   runtime offers. Use the runtime's own parameter names and model identifiers — e.g.
-   Claude Code: `model: "haiku"`, `subagent_type: "general-purpose"`; Cursor:
-   `subagent_type: "generalPurpose"` with a Haiku-class slug from the runtime's allowed
-   model list. If the runtime's list has no Haiku-class model, say so and offer the
-   cheapest available tier (e.g. a fast/composer-class slug) as the substitute — get the
-   user's confirmation rather than silently swapping, since the user picked Haiku for
-   cost.
+2. Spawn a general-purpose subagent pinned to the cheapest/fastest model the runtime
+   actually offers — check the runtime's own allowed model list first; do not assume a
+   model name exists.
+   - Claude Code: `model: "haiku"`, `subagent_type: "general-purpose"`.
+   - Cursor: the Task tool's allowed model list typically has NO Haiku-class slug. The
+     user picked this variant for cost/speed, so substitute the cheapest fast-tier slug
+     from the list (at the time of writing: `composer-2.5-fast`), state the substitution
+     in your report, and proceed — do not block waiting for confirmation. Cursor slugs
+     are exact strings — passing a bare "haiku" fails.
+   - If the runtime's list has no cheap/fast tier at all, say so and run the loop inline
+     instead.
 3. Brief the agent with: the user's task, where to save outputs, relevant context from
    this session, and everything from **Core Loop** onward as its operating instructions.
    The subagent does not inherit this session's skills, so the operational rules below
