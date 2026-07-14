@@ -10,13 +10,8 @@ alwaysApply: true
 1. **立即**读取并遵循全局 skill：`~/.cursor/skills/fable-mode/SKILL.md`
 2. 触发词激活的是该 skill 的**执行纪律**，不是固定仪式。强度按 skill 内「Calibrate to the model」段执行：
    - 前沿模型（Fable/Opus 级）：默认只强制「可失败验证」标准 + 三条 Operational rules；仅对真正跨多文件/多会话的大任务才写完整阶段地图
-   - Sonnet 级及以下：跑完整核心循环（阶段地图 → 并行委派（若 runtime 支持）→ 可失败验证 → 交付前自我批判）
+   - Sonnet 级及以下：跑完整核心循环（阶段地图 → 并行委派（Task 工具，按 skill 内路由表选 slug）→ 可失败验证 → 交付前自我批判）
 3. 三条 Operational rules（verify-before-flag、警告阈值合批、查找替换安全）**任何任务、任何模型都生效**，与是否触发肥波模式无关
 4. 用户未说上述触发词时，不要主动套用完整 Fable 仪式；普通任务直接做
 
-变体（用户点名时）：
-
-- Sonnet 子 agent：`~/.cursor/skills/fable-sonnet/SKILL.md`
-- Haiku 子 agent：`~/.cursor/skills/fable-haiku/SKILL.md`
-
-来源：https://github.com/mrtooher/fable-mode
+来源：https://github.com/tanjiancheng/fable-skill

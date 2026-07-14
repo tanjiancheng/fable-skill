@@ -46,11 +46,9 @@ if has_target cursor; then
   if [[ -d "$HOME/.cursor" ]] || [[ "${FORCE:-0}" == "1" ]]; then
     mkdir -p "$HOME/.cursor/skills" "$HOME/.cursor/rules"
     rm -rf "$HOME/.cursor/skills/fable-mode" "$HOME/.cursor/skills/fable-sonnet" "$HOME/.cursor/skills/fable-haiku"
-    cp -r "$REPO_DIR/cursor/skills/fable-mode"   "$HOME/.cursor/skills/"
-    cp -r "$REPO_DIR/cursor/skills/fable-sonnet" "$HOME/.cursor/skills/"
-    cp -r "$REPO_DIR/cursor/skills/fable-haiku"  "$HOME/.cursor/skills/"
+    cp -r "$REPO_DIR/cursor/skills/fable-mode" "$HOME/.cursor/skills/"
     cp "$REPO_DIR/cursor/rules/feibo-fable-mode.mdc" "$HOME/.cursor/rules/feibo-fable-mode.mdc"
-    installed+=("cursor: ~/.cursor/skills/{fable-mode,fable-sonnet,fable-haiku}, ~/.cursor/rules/feibo-fable-mode.mdc")
+    installed+=("cursor: ~/.cursor/skills/fable-mode, ~/.cursor/rules/feibo-fable-mode.mdc")
   else
     skipped+=("cursor: ~/.cursor not found (set FORCE=1 to install anyway)")
   fi

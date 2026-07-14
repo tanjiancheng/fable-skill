@@ -16,9 +16,7 @@ skill 会按执行模型的档位自动校准强度——前沿模型（Fable/Op
 
 ```
 cursor/
-  skills/fable-mode/       # 主 skill（含 EXAMPLE.md 四个 worked example）
-  skills/fable-sonnet/     # 变体：pin 到 Sonnet 档子 agent 跑
-  skills/fable-haiku/      # 变体：pin 到 Haiku 档子 agent 跑
+  skills/fable-mode/       # 主 skill（含 EXAMPLE.md、子 agent 模型路由表）
   rules/feibo-fable-mode.mdc   # 全局触发规则（alwaysApply）
 claude/
   skills/fable-mode/       # Claude Code 版主 skill（委派段适配 Task 工具 model 参数）
@@ -47,7 +45,7 @@ cd fable-skill
 **Cursor**
 
 ```bash
-cp -r cursor/skills/fable-mode cursor/skills/fable-sonnet cursor/skills/fable-haiku ~/.cursor/skills/
+cp -r cursor/skills/fable-mode ~/.cursor/skills/
 cp cursor/rules/feibo-fable-mode.mdc ~/.cursor/rules/
 ```
 
@@ -72,7 +70,7 @@ codex plugin add codex-fable5@fablecodex
 
 - 大任务（跨多文件/多来源/多会话）：agent 会写出编号的阶段地图，每阶段定义一个"可以失败的检查"，交付前做怀疑式自查
 - 小任务：即使触发也不套仪式，只强制验证纪律和三条操作规则
-- Cursor 里可点名变体："用 fable-sonnet 跑" / "stage this on haiku"
+- 需要委派子任务时，主 skill 内有模型路由表（均衡用 Sonnet 档 slug、省钱/fast 用 `composer-2.5-fast` 等）；用户说「用 sonnet 跑」「cheap」时按表选 slug
 - Codex 里多阶段任务会启用 goal ledger（`codex-fable5 goals ...`），评审敏感任务会启用 findings ledger
 
 不说触发词时，agent 不会主动套用完整 Fable 仪式。
@@ -114,7 +112,7 @@ cd /tmp/fable-skill-install
 
 **第 3 步 — 手动安装（脚本失败时的后备）**
 
-- Cursor：把 `cursor/skills/` 下三个目录整体复制到 `~/.cursor/skills/`，把 `cursor/rules/feibo-fable-mode.mdc` 复制到 `~/.cursor/rules/`。目标已存在时先删旧再复制，不要合并。
+- Cursor：把 `cursor/skills/fable-mode/` 整体复制到 `~/.cursor/skills/`，把 `cursor/rules/feibo-fable-mode.mdc` 复制到 `~/.cursor/rules/`。若用户机器上仍有旧版 `fable-sonnet` / `fable-haiku` 目录，删除它们。目标已存在时先删旧再复制，不要合并。
 - Claude Code：把 `claude/skills/fable-mode/` 整体复制到 `~/.claude/skills/`。然后处理 `~/.claude/CLAUDE.md`：文件不存在则直接写入 `claude/CLAUDE-snippet.md` 内容；已存在则检查是否已有 `<!-- fable-skill:start -->` 标记块，有则替换块内内容，没有则在文件末尾追加（用 `<!-- fable-skill:start -->` 和 `<!-- fable-skill:end -->` 包裹）。**不要覆盖或删除用户 CLAUDE.md 里的其他内容。**
 - Codex：先 `codex plugin marketplace add https://github.com/baskduf/FableCodex.git`，再 `codex plugin add codex-fable5@fablecodex`。然后把 `codex/AGENTS-snippet.md` 中「## 肥波模式」标题起的正文（去掉文件头两行注释）按上述同样的标记块规则写入 `~/.codex/AGENTS.md`。
 

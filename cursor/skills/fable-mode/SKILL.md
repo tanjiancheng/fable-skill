@@ -9,11 +9,10 @@ description: >
   when the user explicitly asks ("do this thoroughly", "be systematic",
   "deep work mode") OR when the task objectively spans multiple
   files, multiple sources, or multiple sessions. Do NOT trigger on ordinary
-  multi-step requests that a direct attempt handles fine. For a run pinned to a
-  specific model, use fable-sonnet or fable-haiku instead. Operational
-  guardrails (verify-before-flag, warning batching, sed safety) are inlined in
-  the Operational rules section below and apply on every model and every task,
-  regardless of whether this loop runs.
+  multi-step requests that a direct attempt handles fine. Operational guardrails
+  (verify-before-flag, warning batching, sed safety) are inlined in the Operational
+  rules section below and apply on every model and every task, regardless of whether
+  this loop runs.
 ---
 
 # Fable Mode
@@ -86,21 +85,33 @@ Stage 2: [Name] → [Expected output]
 ```
 
 **2. Delegate independent work (if the runtime supports it)**
-First check whether subagent/Agent tooling exists in the current runtime. If it does
-not (for example, a plain chat surface with no Agent tool), run the stages sequentially
-and proceed to step 3.
+First check whether subagent tooling exists (Cursor: Task tool; Claude Code: Agent/Task
+tool). If it does not, run the stages sequentially and proceed to step 3.
 
 If subagent tooling is available and stage N and stage M don't depend on each other,
-spawn them concurrently. Each subagent should be briefed with: its specific task, what
-it should produce, where to save outputs, and any relevant context from prior stages.
+spawn them concurrently. Route by cost and user preference — check the runtime's **allowed
+model list first**; slugs are exact strings, bare names like `"sonnet"` fail on Cursor.
+
+| Intent | Cursor (Task tool) | Claude Code |
+| --- | --- | --- |
+| Balanced / thorough sub-work (default) | Newest `claude-sonnet-*` slug (e.g. `claude-sonnet-5-thinking-high`) | `model: "sonnet"` |
+| Cheap / fast sub-work | Cheapest fast-tier slug (e.g. `composer-2.5-fast`; no Haiku-class slug on Cursor) | `model: "haiku"` |
+| Peak synthesis sub-work | Strongest slug available | `model: "opus"` or inherit |
+
+If the user says "用 sonnet 跑" / "cheap" / "fast" / "on haiku", honor that when picking
+the subagent model. If the requested tier isn't in the allowed list, pick the closest match,
+state the substitution in your report, and proceed — do not block.
+
+Each subagent briefing must include: its specific task, expected output, where to save
+results, relevant context from prior stages, the **Core Loop steps 1–4** from this skill,
+and the **Operational rules** below verbatim — a spawned subagent cannot see this skill.
 
 Good delegation: "research X while I do Y", "process these 3 files", "verify this
-independently". Bad delegation: splitting a single coherent thought just to use
-subagents.
+independently". Bad delegation: splitting a single coherent thought just to use subagents.
 
-Keep delegation one level deep by default: a spawned subagent runs its stages
-sequentially rather than spawning its own subagents. Nesting multiplies cost and scatters
-context — allow a second level only when a sub-part clearly needs its own fan-out.
+Keep delegation one level deep by default: a spawned subagent runs its stages sequentially
+rather than spawning its own subagents. Nesting multiplies cost and scatters context —
+allow a second level only when a sub-part clearly needs its own fan-out.
 
 **3. Verify with a check that can fail**
 Each stage must define a pass condition that an external artifact satisfies. Acceptable
